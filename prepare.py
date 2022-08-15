@@ -34,13 +34,13 @@ def prep_titanic(df):
     then breaks 'sex' and 'embarked' into dummy columns with int values.
     Returns the Data Frame cleaned up
     '''
-    df = df.drop(columns=['embarked','class', 'age','deck']).rename(columns={'embark_town' : 'embarked'})
-    df.index.names=["passenger_id"]
     df['family'] = df.sibsp + df.parch
     df = df.drop(columns=["parch", "sibsp"])
-    dummy_df = pd.get_dummies(data=df[['sex','embarked']], drop_first=True)
+    dummy_df = pd.get_dummies(data=df[['sex','embark_town']], drop_first=True)
     df = pd.concat([df, dummy_df], axis=1)
-    
+    df = df.drop(columns=['embarked', 'sex', 'embark_town','class', 'age','deck', 'Unnamed: 0', 'passenger_id'])
+    df.index.names=["passenger_id"]
+
     return df
 
 
@@ -52,8 +52,6 @@ def prep_telco(df):
     Creates Dummy Columns for 'multiple_lines', 'online_security', 'online_backup', 'device_protection', 'tech_support', 'streaming_tv', 'streaming_movies', 'contract_type', 'internet_service_type',  'payment_type'
     Returns the Data Frame cleaned up
     '''
-    df = df.drop(columns=['internet_service_type_id', 'contract_type_id', 'payment_type_id'])
-
     df['gender_encoded'] = df.gender.map({'Female': 1, 'Male': 0})
     df['partner_encoded'] = df.partner.map({'Yes': 1, 'No': 0})
     df['dependents_encoded'] = df.dependents.map({'Yes': 1, 'No': 0})
@@ -74,8 +72,9 @@ def prep_telco(df):
                             ]],
                               drop_first=True)
     df = pd.concat( [df, dummy_df], axis=1 )
-    return df
+    df = df.drop(columns={'Unnamed: 0', 'customer_id', 'gender', 'partner', 'dependents', 'phone_service', 'multiple_lines', 'online_security', 'online_backup', 'device_protection', 'tech_support', 'streaming_tv', 'streaming_movies', 'paperless_billing', 'churn', 'contract_type', 'payment_type', 'internet_service_type', 'churn_month'})
 
+    return df
 
 def data_split(df, target):
     '''
